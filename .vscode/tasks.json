@@ -2,6 +2,14 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
+			"label": "clean make cache",
+			"type": "shell",
+			"command": "sudo make clean",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			}
+		},
+		{
 			"label": "start qemu",
 			"type": "shell",
 			"command": "./run_rlk_arm64.sh run",
@@ -43,12 +51,14 @@
 		{
 			"label": "Collect Clangd DB",
 			"type": "shell",
-			"command": "sudo make clean && bear --output ./.vscode/build/compile_commands.json -- ./run_rlk_arm64.sh build_kernel",
+			"command": "bear --output ./.vscode/build/compile_commands.json -- ./run_rlk_arm64.sh build_kernel",
 			"presentation": {
 				"echo": true,
 				"clear": true,
 				"group": "vm"
 			},
+			"dependsOn": ["clean make cache"],
+			"dependsOrder": "sequence",
 			"isBackground": true,
 			"problemMatcher": [],
 			"detail": "clangd"
