@@ -55,7 +55,7 @@ make_menuconfig(){
 prepare_rootfs(){
 		if [ ! -d $rootfs_path ]; then
 			echo "decompressing rootfs..."
-			# split -d -b 80m rootfs_debian_arm64.tar.xz -- rootfs_debian_arm64.part 
+			# split -d -b 80m rootfs_debian_arm64.tar.xz -- rootfs_debian_arm64.part
 			cat rootfs_debian_arm64.part0* > rootfs_debian_arm64.tar.xz
 			tar -Jxf rootfs_debian_arm64.tar.xz
 		fi
@@ -139,7 +139,7 @@ build_rootfs(){
 }
 
 run_qemu_debian(){
-		cmd="$QEMU -m 1024 -cpu max,sve=on,sve256=on -M virt,gic-version=3,its=on,iommu=smmuv3\
+		cmd="$QEMU -m 1024 -cpu cortex-a57 -M virt,gic-version=3,its=on,iommu=smmuv3\
 			-nographic $SMP -kernel arch/arm64/boot/Image \
 			-append \"$kernel_arg $debug_arg $rootfs_arg $crash_arg $dyn_arg\"\
 			-drive if=none,file=$rootfs_image,id=hd0\
@@ -159,7 +159,7 @@ case $1 in
 		#prepare_rootfs
 		#build_rootfs
 		;;
-	
+
 	menuconfig)
 		make_menuconfig
 		;;

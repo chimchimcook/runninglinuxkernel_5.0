@@ -29,9 +29,8 @@
 #include <asm/cpufeature.h>
 #include <asm/syscall.h>
 
-SYSCALL_DEFINE6(mmap, unsigned long, addr, unsigned long, len,
-		unsigned long, prot, unsigned long, flags,
-		unsigned long, fd, off_t, off)
+SYSCALL_DEFINE6(mmap, unsigned long, addr, unsigned long, len, unsigned long, prot, unsigned long, flags, unsigned long,
+		fd, off_t, off)
 {
 	if (offset_in_page(off) != 0)
 		return -EINVAL;
@@ -41,28 +40,51 @@ SYSCALL_DEFINE6(mmap, unsigned long, addr, unsigned long, len,
 
 SYSCALL_DEFINE1(arm64_personality, unsigned int, personality)
 {
-	if (personality(personality) == PER_LINUX32 &&
-		!system_supports_32bit_el0())
+	if (personality(personality) == PER_LINUX32 && !system_supports_32bit_el0())
 		return -EINVAL;
 	return ksys_personality(personality);
+}
+
+SYSCALL_DEFINE2(getpuid, pid_t __user *, pid, uid_t __user *, uid)
+{
+	struct task_struct *task;
+	// pid_t tpid;
+	// uid_t tuid;
+
+	printk("%s\n", __func__);
+
+	if (!pid || !uid)
+		return -EINVAL;
+
+	task = get_current();
+	*pid = task->pid;
+	*uid = task_uid(task).val;
+
+	printk("getpuid: pid=%d, uid=%d\n", *pid, *uid);
+
+	// if (copy_to_user(pid, &tpid, sizeof(tpid)) || copy_to_user(uid, &tuid, sizeof(tuid)))
+	// 	return -EFAULT;
+
+	return 0;
 }
 
 /*
  * Wrappers to pass the pt_regs argument.
  */
-#define sys_personality		sys_arm64_personality
+#define sys_personality sys_arm64_personality
 
 asmlinkage long sys_ni_syscall(const struct pt_regs *);
-#define __arm64_sys_ni_syscall	sys_ni_syscall
+#define __arm64_sys_ni_syscall sys_ni_syscall
 
 #undef __SYSCALL
-#define __SYSCALL(nr, sym)	asmlinkage long __arm64_##sym(const struct pt_regs *);
+#define __SYSCALL(nr, sym) asmlinkage long __arm64_##sym(const struct pt_regs *);
 #include <asm/unistd.h>
 
 #undef __SYSCALL
-#define __SYSCALL(nr, sym)	[nr] = (syscall_fn_t)__arm64_##sym,
+#define __SYSCALL(nr, sym) [nr] = (syscall_fn_t)__arm64_##sym,
 
 const syscall_fn_t sys_call_table[__NR_syscalls] = {
 	[0 ... __NR_syscalls - 1] = (syscall_fn_t)sys_ni_syscall,
 #include <asm/unistd.h>
 };
+

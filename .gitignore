@@ -185,3 +185,8 @@ sphinx_*/
 /rust-project.json
 
 *.builtin
+/rootfs_debian_arm64*
+!.vscode/
+.vscode/build
+# ignore all executable files.
+/kmodules/rlk_lab/**/*[!.*]

@@ -1,0 +1,89 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "start qemu",
+			"type": "shell",
+			"command": "./run_rlk_arm64.sh run",
+			"presentation": {
+				"echo": true,
+				"clear": true,
+				"group": "vm"
+			},
+			"isBackground": true,
+			"problemMatcher": [],
+			"detail": "启动qemu"
+		},
+		{
+			"label": "debug qemu",
+			"type": "shell",
+			"command": "./run_rlk_arm64.sh run debug",
+			"presentation": {
+				"echo": true,
+				"clear": true,
+				"group": "vm"
+			},
+			"isBackground": true,
+			"problemMatcher": [],
+			"detail": "调试qemu"
+		},
+		{
+			"label": "Compile Kernel",
+			"type": "shell",
+			"command": "./run_rlk_arm64.sh build_kernel",
+			"presentation": {
+				"echo": true,
+				"clear": true,
+				"group": "vm"
+			},
+			"isBackground": true,
+			"problemMatcher": [],
+			"detail": "编译内核"
+		},
+		{
+			"label": "Collect Clangd DB",
+			"type": "shell",
+			"command": "sudo make clean && bear --output ./.vscode/build/compile_commands.json -- ./run_rlk_arm64.sh build_kernel",
+			"presentation": {
+				"echo": true,
+				"clear": true,
+				"group": "vm"
+			},
+			"isBackground": true,
+			"problemMatcher": [],
+			"detail": "clangd"
+		},
+		{
+			"label": "Build Rootfs",
+			"type": "shell",
+			"command": "sudo ./run_rlk_arm64.sh build_rootfs",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"presentation": {
+				"echo": true,
+				"clear": true,
+				"group": "vm"
+			},
+			"isBackground": true,
+			"problemMatcher": [],
+			"detail": "编译内核"
+		},
+		{
+			"label": "Update Rootfs",
+			"type": "shell",
+			"command": "sudo ./run_rlk_arm64.sh update_rootfs",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"presentation": {
+				"echo": true,
+				"clear": true,
+				"group": "vm"
+			},
+			"isBackground": true,
+			"problemMatcher": [],
+			"detail": "编译内核"
+		},
+	]
+}
